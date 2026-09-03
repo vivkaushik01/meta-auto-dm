@@ -98,9 +98,12 @@ router.get('/auth/facebook/callback', async (req, res) => {
       // Tell Meta to actually start sending this Page's events to our app.
       // Without this call, the webhook subscription in the App Dashboard has
       // nothing to deliver - each individual Page has to opt in separately.
+      // Note: 'feed' is the only valid value here - it's the topic that carries
+      // comment events. Which specific sub-events (comments) get delivered is
+      // controlled by the field checkboxes in the App Dashboard's Webhooks screen.
       try {
         const subRes = await fetch(
-          `https://graph.facebook.com/${GRAPH_VERSION}/${page.id}/subscribed_apps?subscribed_fields=feed,comments&access_token=${page.access_token}`,
+          `https://graph.facebook.com/${GRAPH_VERSION}/${page.id}/subscribed_apps?subscribed_fields=feed&access_token=${page.access_token}`,
           { method: 'POST' }
         );
         const subData = await subRes.json();
