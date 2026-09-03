@@ -62,14 +62,14 @@ RETURNING id;
 ## 5. Link a post to a product - the core action
 
 ```bash
-curl -X POST https://your-service.onrender.com/api/campaigns \
+curl -X POST https://meta-auto-dm-nz5v.onrender.com/api/campaigns \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": 1,
     "account_id": 1,
-    "post_url": "https://www.instagram.com/p/CXXXXXXXX/",
+    "post_url": "https://www.facebook.com/reel/1811057150050836",
     "keyword_group_id": 1,
-    "links": [{ "label": "Buy on Amazon", "url": "https://amazon.com/dp/XXXXX" }],
+    "links": [{ "label": "Buy on Amazon", "url": "https://link.amazon/B0hSDLae1" }],
     "reply_mode": "all_links",
     "message_template": "Thanks for asking! Here you go: {{links}}"
   }'
