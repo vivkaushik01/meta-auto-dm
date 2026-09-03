@@ -94,6 +94,21 @@ router.get('/auth/facebook/callback', async (req, res) => {
           page.access_token // Page tokens don't expire while the user token is valid
         ]
       );
+
+      // Tell Meta to actually start sending this Page's events to our app.
+      // Without this call, the webhook subscription in the App Dashboard has
+      // nothing to deliver - each individual Page has to opt in separately.
+      try {
+        const subRes = await fetch(
+          `https://graph.facebook.com/${GRAPH_VERSION}/${page.id}/subscribed_apps?subscribed_fields=feed,comments&access_token=${page.access_token}`,
+          { method: 'POST' }
+        );
+        const subData = await subRes.json();
+        if (!subRes.ok) console.error(`Failed to subscribe page ${page.id} to webhooks:`, subData);
+        else console.log(`Page ${page.id} (${page.name}) subscribed to webhooks.`);
+      } catch (err) {
+        console.error(`Error subscribing page ${page.id} to webhooks:`, err);
+      }
     }
 
     // Redirect back into your dashboard - the account is now connected, no
