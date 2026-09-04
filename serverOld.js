@@ -59,18 +59,8 @@ app.post('/webhook', async (req, res) => {
       const ownerId = entry.id; // Page ID (FB) or IG business account ID
       const changes = entry.changes || [];
       for (const change of changes) {
-        // Instagram delivers comment events on the 'comments' field.
-        // Facebook Pages deliver them on 'feed' (which also carries likes,
-        // reactions, edits, and status posts - so we filter to actual new
-        // top-level comments via item/verb before treating it as a comment).
-        if (change.field === 'comments') {
-          await handleComment(ownerId, change.value);
-        } else if (change.field === 'feed') {
-          const v = change.value;
-          if (v.item === 'comment' && v.verb === 'add') {
-            await handleComment(ownerId, v);
-          }
-        }
+        if (change.field !== 'comments') continue;
+        await handleComment(ownerId, change.value);
       }
     }
   } catch (err) {
