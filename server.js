@@ -123,7 +123,21 @@ async function handleComment(ownerId, value) {
   }
 }
 
+// ============================================================================
+// HEALTH CHECK — hit by the self-ping loop below (and/or an external monitor
+// like UptimeRobot) so the free-tier instance never gets a chance to sleep.
+// ============================================================================
+app.get("/health", (req, res) => res.status(200).send("OK"));
+
 app.get('/', (_req, res) => res.send('Auto-DM engine is running.'));
 
+if (process.env.RENDER_EXTERNAL_URL) {
+  const PING_INTERVAL_MS = 10 * 60 * 1000;
+  setInterval(() => {
+    fetch(`${process.env.RENDER_EXTERNAL_URL}/health`)
+      .then(() => console.log("[keep-alive] ping ok"))
+      .catch((err) => console.error("[keep-alive] ping failed:", err.message));
+  }, PING_INTERVAL_MS);
+}
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Webhook engine listening on port ${PORT}`));
